@@ -122,6 +122,7 @@ _Model : MyNet (inspired by VGG16)_
 
 To train the model, I used a Cross Entropy loss operation.  I included the use of the Adam optimizer with a learning rate of 0.001, and batch size of 128.  I built multiple models using the RGB, Grayscale, and RGB+Grayscale data.  I also trained models with a variety of dropout rates (50, 60, 75, 100%) and for various epochs (10, 30, 60, 100, 200, 400, 1000).  After training I printed a chart demonstrating the validation accuracy throughout the training cycle.  This helped me gain a better understanding of what was happening with the model (overfitting, plateauing, etc.).
 
+
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
@@ -170,7 +171,7 @@ Here are the results of the prediction:
 | Slippery Road			| Slippery Road      							|
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ~96%.
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
@@ -226,6 +227,12 @@ For the fifth image, the model is relatively split on whether the image is a Ped
 | 6.651%					| 	Speed limit (80km/h)										|
 | 5.926%	      			| Traffic signals					 				|
 | 1.648%				    | Right-of-way at the next intersection     							|
+
+
+After the identifying the web images, I had 5 images that were larger than were provided in the training set. I then preprocessed this data by resizing the images to 323x32x3, converting to grayscale, and applying the same normalization as applied during training and validation steps.
+
+Having pulled the images from various websites, I noticed a few potential issues.  First, the images were of various dimensions, so resizing them all to 32x32x3 most likely had different levels of data loss.  Second, the images had different angles on the signs, with varying backgrounds (clouds, trees, etc.) that could impact the overall ability of the model to classify the images.  I did not crop the images at all.  Doing this could help eliminate background oise in the images thus helping the model to more easily identifying the proper label.  Finally, some of the images used were from websites that included watermarks.  These watermarks are embedded all over the images.  Resizing the images should have reduced the negative impact of the watermarks, however, they would still degrade the images and make it harder for a model to classify them.
+
 
 
 
