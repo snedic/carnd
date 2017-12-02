@@ -27,6 +27,9 @@ The goals / steps of this project are the following:
 [image6]: ./examples/placeholder.png "Traffic Sign 3"
 [image7]: ./examples/placeholder.png "Traffic Sign 4"
 [image8]: ./examples/placeholder.png "Traffic Sign 5"
+[charts]: ./writeupImages/charts.png "Charts"
+[sign1]: ./writeupImages/sign1.png "Sign 1"
+[sign2]: ./writeupImages/sign2.png "Sign 2"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -53,9 +56,17 @@ signs data set:
 
 #### 2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+Here is an exploratory visualization of the data set. It is a set of bar charts showing how the data is not evenly distributed across all 43 classes.  The data does, however, have a similar ratios for Train, Validate, and Test data sets...
 
-[image9]: (writeupImages/charts.png)
+![alt text][charts]
+
+
+I further explored teh data by exploring how the records appeared with different applications of thresholding, grayscaling, etc.  Here are two examples of what the images looked like.  As you can see, grayscaling appears to clear up the image quite a bit.  Thresholding, both with upper and lower bounds, was inconsistent across the images as to whether it aided in identifying key features.  Ultimately I opted that grayscale would be the most beneficial.
+
+![alt text][sign1]
+
+![alt text][sign2]
+
 
 ### Design and Test a Model Architecture
 
