@@ -174,20 +174,60 @@ The model was able to correctly guess 4 of the 5 traffic signs, which gives an a
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making predictions on my final model is located in a cell near the bottom of the Ipython notebook.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+For the first image, the model is relatively sure that this is a Right-of-way sign (probability of 99.077%), and the image does contain a Right-of-way sign. The top five soft max probabilities were
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+| 99.077%         			| Right-of-way at the next intersection   									| 
+| 0.884%     				| Beware of ice/snow 										|
+| 0.032%					| Double curve											|
+| 0.007%	      			| Pedestrians					 				|
+| 0.000%				    | Children crossing      							|
+
+For the second image, the model is relatively sure that this is a Speed Limit (30km/h) sign (probability of 99.767%), and the image does contain a Speed Limit (30km/h) sign. The top five soft max probabilities were
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 99.767%         			| Speed limit (30km/h)   									| 
+| 0.127%     				| Speed limit (20km/h) 										|
+| 0.097%					| Speed limit (50km/h)											|
+| 0.006%	      			| Speed limit (70km/h)					 				|
+| 0.003%				    | Speed limit (80km/h)      							|
 
 
-For the second image ... 
+For the thrid image, the model is relatively unsure that this is a Speed Limit (30km/h) sign (probability of 33.130%), and the image does not contain a Speed Limit (30km/h) sign. The image does contain a Dangerous curve to the right sign.  The top five soft max probabilities were
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 33.130%         			| Speed limit (30km/h)   									| 
+| 18.363%     				| Speed limit (20km/h) 										|
+| 7.584%					| Ahead only											|
+| 7.225%	      			| Speed limit (70km/h)					 				|
+| 2.784%				    | Speed limit (120km/h)      							|
+
+For the fourth image, the model is sure that this is a Speed limit (60km/h) sign (probability of 100.000%), and the image does contain a Speed Limit (30km/h) sign. The top five soft max probabilities were
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 100.000%         			| Speed limit (60km/h)   									| 
+| 0.000%     				| Speed limit (50km/h) 										|
+| 0.000%					| 	Speed limit (80km/h)										|
+| 0.000%	      			| Speed limit (30km/h)					 				|
+| 0.000%				    | No vehicles      							|
+
+For the fifth image, the model is relatively split on whether the image is a Pedestrians sign (probability of 39.980%), and the image does contain a Pedestrians sign. The top five soft max probabilities were
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 39.980%         			| Pedestrians 									| 
+| 39.610%     				| General caution 										|
+| 6.651%					| 	Speed limit (80km/h)										|
+| 5.926%	      			| Traffic signals					 				|
+| 1.648%				    | Right-of-way at the next intersection     							|
+
+
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 #### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
