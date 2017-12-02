@@ -32,6 +32,12 @@ The goals / steps of this project are the following:
 [sign2]: ./writeupImages/sign2.png "Sign 2"
 [sign3]: ./writeupImages/sign3.png "Sign 3"
 
+[germ1]: http://bicyclegermany.com/Images/Laws/100_1607.jpg "German Sign 1 (label:11)"
+[germ2]: http://c8.alamy.com/comp/G667W0/road-sign-speed-limit-30-kmh-zone-passau-bavaria-germany-G667W0.jpg "German Sign 2 (label:1)"
+[germ3]: https://thumb9.shutterstock.com/display_pic_with_logo/3869111/369163418/stock-photo-german-road-sign-dangerous-curve-to-the-right-369163418.jpg "German Sign 3 (label:20)"
+[germ4]: https://raw.githubusercontent.com/dhnkrn/Traffic-Sign-Classifier/master/images/german_4.jpg "German Sign 4 (label:3)"
+[germ5]: https://i.pinimg.com/236x/03/d3/50/03d35053a3b46e756a714539858a4762--traffic-sign-pedestrian.jpg "German Sign 5 (label:27)"
+
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
@@ -146,8 +152,8 @@ If a well known architecture was chosen:
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][germ1] ![alt text][germ2] ![alt text][germ3] 
+![alt text][germ4] ![alt text][germ5]
 
 The first image might be difficult to classify because ...
 
