@@ -121,9 +121,11 @@ To augment the data sat, I also flipped images and angles thinking that this wou
 
 Etc ....
 
-After the collection process, I had X number of data points. I then preprocessed this data by ...
+After the collection process, I had larger images than were provided in the training set. I then preprocessed this data by resizing the images to 323x32x3, converting to grayscale, and applying the same normalization as applied during training and validation steps.
+
+Having pulled the images from various websites, I noticed a few potential issues.  First, the images were of various dimensions, so resizing them all to 32x32x3 most likely had different levels of data loss.  Second, the images had different angles on the signs, with varying backgrounds (clouds, trees, etc.) that could impact the overall ability of the model to classify the images.  I did not crop the images at all.  Doing this could help eliminate background oise in the images thus helping the model to more easily identifying the proper label.  Finally, some of the images used were from websites that included watermarks.  These watermarks are embedded all over the images.  Resizing the images should have reduced the negative impact of the watermarks, however, they would still degrade the images and make it harder for a model to classify them.
 
 
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
+Prior to training, I randomly shuffled the data set and used the validation dataset provided. 
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was between 100 and 200 for a couple models and between 300 and 400 for another as is evidenced by the various charts in my notebook. I used an adam optimizer so that manually training the learning rate wasn't necessary.
