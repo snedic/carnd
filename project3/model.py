@@ -40,26 +40,23 @@ from keras.layers import Convolution2D
 from keras.layers import Cropping2D
 from keras.layers import pooling, MaxPooling2D
 
-ch, row, col = 3, 160, 320
-
 #https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/
 model = Sequential()
 
 #trim input images
 model.add(Cropping2D(cropping=((60, 20), (0, 0)), input_shape=(160, 320, 3)))
 
-#input
-#model.add(Lambda(lambda x: (x / 255.0) -0.5, input_shape=(160,320,3)))
-#model.add(Lambda(lambda x: (x / 127.5) -1., input_shape=(row,col,ch), output_shape=(row,col,ch)))
-
 #normalization
-
 model.add(Lambda(lambda x: (x / 127.5) - 1.))
-model.add(Convolution2D(6,5,5,activation="relu"))
+
+#rest of the model
+model.add(Convolution2D(24, 5, 5, activation="relu"))
+model.add(Convolution2D(36, 5, 5, activation="relu"))
 model.add(MaxPooling2D())
 model.add(Flatten())
-model.add(Dense(120))
-model.add(Dense(84))
+model.add(Dense(100))
+model.add(Dense(50))
+model.add(Dense(10))
 model.add(Dense(1))
 
 
@@ -78,6 +75,6 @@ model.compile(loss='mse', optimizer='adam')
 #model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=5)
 model.fit_generator(train_generator, samples_per_epoch=len(train_samples),
                     validation_data=valid_generator, nb_val_samples=len(valid_samples),
-                    nb_epoch=3)
+                    nb_epoch=1)
 
-model.save('model.h5')
+model.save('model.h5', overwrite=True)
