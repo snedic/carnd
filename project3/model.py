@@ -3,7 +3,7 @@ import csv
 import cv2
 import numpy as np
 from sklearn.model_selection import train_test_split
-from project3.generators import batchGenerator
+from generators import batchGenerator
 
 
 samples = []
