@@ -22,10 +22,10 @@ def batchGenerator(samples, batchSize=32, resizeRatio=(1., 1.), imgPath='./data/
                 centerAngle = float(batchSample[3])
 
                 # crop image
-                centerImg = centerImg[60:-22]
+                #centerImg = centerImg[60:-22]
 
                 # resize image
-                centerImg = resize(src=centerImg, dsize=(0, 0), fx=resizeRatio[0], fy=resizeRatio[1])
+                #centerImg = resize(src=centerImg, dsize=(0, 0), fx=resizeRatio[0], fy=resizeRatio[1])
 
                 images.append(centerImg)
                 angles.append(centerAngle)
