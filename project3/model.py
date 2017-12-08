@@ -13,8 +13,15 @@ with open('./data/driving_log.csv') as csvfile:
         if not reader.line_num == 1:
             samples.append(line)
 train_samples, valid_samples = train_test_split(samples, test_size=0.2)
-train_generator = batchGenerator(train_samples,batchSize=32, imgPath='./data/IMG/')
-valid_generator = batchGenerator(valid_samples,batchSize=32, imgPath='./data/IMG/')
+resizeImgRatio = (0.5, 0.5)
+train_generator = batchGenerator(train_samples,
+                                 batchSize=32,
+                                 resizeRatio=resizeImgRatio,
+                                 imgPath='./data/IMG/')
+valid_generator = batchGenerator(valid_samples,
+                                 batchSize=32,
+                                 resizeRatio=resizeImgRatio,
+                                 imgPath='./data/IMG/')
 
 
 #images = []
@@ -44,10 +51,10 @@ from keras.layers import pooling, MaxPooling2D
 model = Sequential()
 
 #trim input images
-model.add(Cropping2D(cropping=((60, 20), (0, 0)), input_shape=(160, 320, 3)))
+#model.add(Cropping2D(cropping=((60, 20), (0, 0)), input_shape=(160, 320, 3)))
 
 #normalization
-model.add(Lambda(lambda x: (x / 127.5) - 1.))
+model.add(Lambda(lambda x: (x / 127.5) - 1., input_shape=(39, 160, 3)))
 
 #rest of the model
 model.add(Convolution2D(24, 5, 5, activation="relu"))
@@ -75,6 +82,6 @@ model.compile(loss='mse', optimizer='adam')
 #model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=5)
 model.fit_generator(train_generator, samples_per_epoch=len(train_samples),
                     validation_data=valid_generator, nb_val_samples=len(valid_samples),
-                    nb_epoch=1)
+                    nb_epoch=15)
 
 model.save('model.h5', overwrite=True)
