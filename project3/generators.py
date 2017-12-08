@@ -21,6 +21,14 @@ def batchGenerator(samples, batchSize=32, resizeRatio=(1., 1.), imgPath='./data/
                 centerImg = imread(name)
                 centerAngle = float(batchSample[3])
 
+                name = imgPath+batchSample[1].split('/')[-1]
+                leftImg = imread(name)
+                leftAngle = float(batchSample[3])
+
+                name = imgPath+batchSample[2].split('/')[-1]
+                rightImg = imread(name)
+                rightAngle = float(batchSample[3])
+
                 # crop image
                 #centerImg = centerImg[60:-22]
 
@@ -28,7 +36,12 @@ def batchGenerator(samples, batchSize=32, resizeRatio=(1., 1.), imgPath='./data/
                 #centerImg = resize(src=centerImg, dsize=(0, 0), fx=resizeRatio[0], fy=resizeRatio[1])
 
                 images.append(centerImg)
+                images.append(leftImg)
+                images.append(rightImg)
+
                 angles.append(centerAngle)
+                angles.append(leftAngle)
+                angles.append(rightAngle)
 
 
             # trim image to only see section with road
