@@ -76,8 +76,8 @@ model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
 history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*3*2,
                     validation_data=valid_generator, nb_val_samples=len(valid_samples)*3*2,
-                    nb_epoch=5)
+                    nb_epoch=40)
 
-model.save('model.h5', overwrite=True)
+model.save('nvidia.h5', overwrite=True)
 
 plotLossHistory(history_object, saveFileName='msePerEpoch_myModel.png')
