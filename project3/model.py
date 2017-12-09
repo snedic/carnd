@@ -66,8 +66,23 @@ model.add(Dense(1))
 
 
 model.compile(loss='mse', optimizer='adam')
-model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*3,
+history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*3,
                     validation_data=valid_generator, nb_val_samples=len(valid_samples)*3,
                     nb_epoch=30)
 
 model.save('model.h5', overwrite=True)
+### print the keys contained in the history object
+#print(history_object.history.keys())
+
+
+from matplolib import pyplot as plt
+### plot the training and validation loss for each epoch
+plt.plot(history_object.history['loss'])
+plt.plot(history_object.history['val_loss'])
+plt.title('model mean squared error loss')
+plt.ylabel('mean squared error loss')
+plt.xlabel('epoch')
+plt.legend(['training set', 'validation set'], loc='upper right')
+plt.show()
+
+plt.savefig('LossPerEpoch.png')
