@@ -10,6 +10,7 @@ from keras.layers import pooling, MaxPooling2D
 from keras.layers import Cropping2D
 from keras.layers import Dropout
 
+from matplotlib import pyplot as plt
 
 samples = []
 with open('./trainData/driving_log.csv') as csvfile:
@@ -78,14 +79,13 @@ model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
 history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*3,
                     validation_data=valid_generator, nb_val_samples=len(valid_samples)*3,
-                    nb_epoch=30)
+                    nb_epoch=20)
 
 model.save('model.h5', overwrite=True)
 ### print the keys contained in the history object
 #print(history_object.history.keys())
 
 
-from matplolib import pyplot as plt
 ### plot the training and validation loss for each epoch
 plt.plot(history_object.history['loss'])
 plt.plot(history_object.history['val_loss'])
