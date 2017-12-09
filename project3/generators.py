@@ -1,6 +1,6 @@
 from sklearn.utils import shuffle
 from cv2 import imread, resize
-from numpy import array
+from numpy import array, fliplr
 
 def batchGenerator(samples, batchSize=33, resizeRatio=(1., 1.), imgPath='./data/IMG/'):
     ''' Generate a batch of size batchSize for the sample reference provided
@@ -9,7 +9,7 @@ def batchGenerator(samples, batchSize=33, resizeRatio=(1., 1.), imgPath='./data/
                 resizeRatio - resize the image by this ratio, default is (1.,1.) meaning no change
                 imgPath - the directory path to the folder containing the images, default is ./data/IMG'''
     nSamples = len(samples)
-    batchSize = int(batchSize/3)
+#    batchSize = int(batchSize/3)
     while 1:
         shuffle(samples)
         for offset in range(0, nSamples, batchSize):
@@ -40,10 +40,17 @@ def batchGenerator(samples, batchSize=33, resizeRatio=(1., 1.), imgPath='./data/
                 images.append(leftImg)
                 images.append(rightImg)
 
+                images.append(fliplr(centerImg))
+                images.append(fliplr(leftImg))
+                images.append(fliplr(rightImg))
+
                 angles.append(centerAngle)
                 angles.append(leftAngle)
                 angles.append(rightAngle)
 
+                angles.append(-centerAngle)
+                angles.append(-leftAngle)
+                angles.append(-rightAngle)
 
             # trim image to only see section with road
             X_train = array(images)

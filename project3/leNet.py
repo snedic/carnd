@@ -6,12 +6,11 @@ from generators import batchGenerator
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Lambda
 from keras.layers import Convolution2D
-from keras.layers import pooling, MaxPooling2D
+from keras.layers import MaxPooling2D
 from keras.layers import Cropping2D
 from keras.layers import Dropout
 
-from matplotlib import pyplot as plt
-
+from helpers import plotLossHistory
 
 samples = []
 with open('./trainData/driving_log.csv') as csvfile:
@@ -20,30 +19,27 @@ with open('./trainData/driving_log.csv') as csvfile:
         if not reader.line_num == 1:
             samples.append(line)
 train_samples, valid_samples = train_test_split(samples, test_size=0.2)
-#resizeImgRatio = (0.5, 0.5)
 train_generator = batchGenerator(train_samples,
                                  batchSize=33,
-                                 #resizeRatio=resizeImgRatio,
                                  imgPath='./trainData/IMG/')
 valid_generator = batchGenerator(valid_samples,
                                  batchSize=33,
-                                 #resizeRatio=resizeImgRatio,
                                  imgPath='./trainData/IMG/')
 
 # Train a model
 row, col, ch = 160, 320, 3#39, 160, 3#58, 240, 3
 dropRate = 0.4
-#https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/
+
 model = Sequential()
 
 #crop
 model.add(Cropping2D(cropping=((60, 22), (0, 0)), input_shape=(row, col, ch)))
 
 #normalization
-model.add(Lambda(lambda x: (x / 127.5) - 1.))#, input_shape=(row, col, ch)))
+model.add(Lambda(lambda x: (x / 127.5) - 1.))
 
 #leNet
-model.add(Convolution2D(6,5,5,activation="relu"))
+model.add(Convolution2D(6, 5, 5, activation="relu"))
 model.add(Dropout(dropRate))
 model.add(MaxPooling2D())
 model.add(Dropout(dropRate))
@@ -56,22 +52,10 @@ model.add(Dense(1))
 
 
 model.compile(loss='mse', optimizer='adam')
-history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*3,
-                    validation_data=valid_generator, nb_val_samples=len(valid_samples)*3,
+history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*3*2,
+                    validation_data=valid_generator, nb_val_samples=len(valid_samples)*3*2,
                     nb_epoch=10)
 
 model.save('leNet.h5', overwrite=True)
-### print the keys contained in the history object
-#print(history_object.history.keys())
 
-
-### plot the training and validation loss for each epoch
-plt.plot(history_object.history['loss'])
-plt.plot(history_object.history['val_loss'])
-plt.title('model mean squared error loss')
-plt.ylabel('mean squared error loss')
-plt.xlabel('epoch')
-plt.legend(['training set', 'validation set'], loc='upper right')
-plt.show()
-
-plt.savefig('LossPerEpoch.png')
+plotLossHistory(history_object, saveFileName='msePerEpoch_leNet.png')
