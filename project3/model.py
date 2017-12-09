@@ -10,7 +10,7 @@ from keras.layers import pooling, MaxPooling2D
 from keras.layers import Cropping2D
 from keras.layers import Dropout
 
-from matplotlib import pyplot as plt
+from helpers import plotLossHistory
 
 samples = []
 with open('./trainData/driving_log.csv') as csvfile:
@@ -50,26 +50,23 @@ model.add(Lambda(lambda x: (x / 127.5) - 1.))#, input_shape=(row, col, ch)))
 #model.add(Dense(1))
 
 #rest of the model
-model.add(Convolution2D(6, 5, 5, activation="relu"))
+model.add(Convolution2D(24, 5, 5, subsample=(2, 2), activation="relu"))
 model.add(Dropout(dropRate))
-model.add(Convolution2D(9, 5, 5, activation="relu"))
+model.add(Convolution2D(36, 5, 5, subsample=(2, 2), activation="relu"))
 model.add(Dropout(dropRate))
-model.add(Convolution2D(12, 5, 5, activation="relu"))
+model.add(Convolution2D(48, 5, 5, subsample=(2, 2), activation="relu"))
 model.add(Dropout(dropRate))
-model.add(Convolution2D(16, 3, 3, activation="relu"))
+model.add(Convolution2D(64, 3, 3, subsample=(2, 2), "relu"))
 model.add(Dropout(dropRate))
-model.add(Convolution2D(16, 3, 3, activation="relu"))
+model.add(Convolution2D(64, 3, 3, subsample=(2, 2), "relu"))
 model.add(Dropout(dropRate))
-#model.add(Convolution2D(24, 5, 5, activation="relu"))
-#model.add(Convolution2D(36, 5, 5, activation="relu"))
-#model.add(Convolution2D(48, 5, 5, activation="relu"))
-#model.add(Convolution2D(64, 3, 3, activation="relu"))
-#model.add(Convolution2D(64, 3, 3, activation="relu"))
+
 model.add(MaxPooling2D())
 model.add(Dropout(dropRate))
 model.add(Flatten())
-#model.add(Dense(100))
-model.add(Dense(15))
+model.add(Dense(100))
+model.add(Dropout(dropRate))
+model.add(Dense(50))
 model.add(Dropout(dropRate))
 model.add(Dense(10))
 model.add(Dropout(dropRate))
@@ -82,17 +79,5 @@ history_object = model.fit_generator(train_generator, samples_per_epoch=len(trai
                     nb_epoch=20)
 
 model.save('model.h5', overwrite=True)
-### print the keys contained in the history object
-#print(history_object.history.keys())
 
-
-### plot the training and validation loss for each epoch
-plt.plot(history_object.history['loss'])
-plt.plot(history_object.history['val_loss'])
-plt.title('model mean squared error loss')
-plt.ylabel('mean squared error loss')
-plt.xlabel('epoch')
-plt.legend(['training set', 'validation set'], loc='upper right')
-plt.show()
-
-plt.savefig('LossPerEpoch.png')
+plotLossHistory(history_object, saveFileName='msePerEpoch_myModel.png')

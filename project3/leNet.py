@@ -39,7 +39,7 @@ model.add(Cropping2D(cropping=((60, 22), (0, 0)), input_shape=(row, col, ch)))
 model.add(Lambda(lambda x: (x / 127.5) - 1.))
 
 #leNet
-model.add(Convolution2D(6, 5, 5, activation="relu"))
+model.add(Convolution2D(6, 5, 5, subsample=(2, 2), "relu"))
 model.add(Dropout(dropRate))
 model.add(MaxPooling2D())
 model.add(Dropout(dropRate))
