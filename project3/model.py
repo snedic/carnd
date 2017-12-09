@@ -8,6 +8,7 @@ from keras.layers import Flatten, Dense, Lambda
 from keras.layers import Convolution2D
 from keras.layers import pooling, MaxPooling2D
 from keras.layers import Cropping2D
+from keras.layers import Dropout
 
 
 samples = []
@@ -29,6 +30,7 @@ valid_generator = batchGenerator(valid_samples,
 
 # Train a model
 row, col, ch = 160, 320, 3#39, 160, 3#58, 240, 3
+dropRate = 0.4
 #https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/
 model = Sequential()
 
@@ -48,20 +50,28 @@ model.add(Lambda(lambda x: (x / 127.5) - 1.))#, input_shape=(row, col, ch)))
 
 #rest of the model
 model.add(Convolution2D(6, 5, 5, activation="relu"))
+model.add(Dropout(dropRate))
 model.add(Convolution2D(9, 5, 5, activation="relu"))
+model.add(Dropout(dropRate))
 model.add(Convolution2D(12, 5, 5, activation="relu"))
+model.add(Dropout(dropRate))
 model.add(Convolution2D(16, 3, 3, activation="relu"))
+model.add(Dropout(dropRate))
 model.add(Convolution2D(16, 3, 3, activation="relu"))
+model.add(Dropout(dropRate))
 #model.add(Convolution2D(24, 5, 5, activation="relu"))
 #model.add(Convolution2D(36, 5, 5, activation="relu"))
 #model.add(Convolution2D(48, 5, 5, activation="relu"))
 #model.add(Convolution2D(64, 3, 3, activation="relu"))
 #model.add(Convolution2D(64, 3, 3, activation="relu"))
 model.add(MaxPooling2D())
+model.add(Dropout(dropRate))
 model.add(Flatten())
 #model.add(Dense(100))
 model.add(Dense(15))
+model.add(Dropout(dropRate))
 model.add(Dense(10))
+model.add(Dropout(dropRate))
 model.add(Dense(1))
 
 
