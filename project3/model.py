@@ -31,7 +31,7 @@ valid_generator = batchGenerator(valid_samples,
 
 # Train a model
 row, col, ch = 160, 320, 3#39, 160, 3#58, 240, 3
-dropRate = 0.4
+dropRate = 0.3
 #https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/
 model = Sequential()
 
@@ -39,8 +39,8 @@ model = Sequential()
 model.add(Cropping2D(cropping=((60, 22), (0, 0)), input_shape=(row, col, ch)))
 
 #normalization
-model.add(Lambda(lambda x: (x / 127.5) - 1.))#, input_shape=(row, col, ch)))
-#model.add(Lambda(lambda x: (x / 255.0) -0.5))#, input_shape=(160,320,3)))
+#model.add(Lambda(lambda x: (x / 127.5) - 1.))#, input_shape=(row, col, ch)))
+model.add(Lambda(lambda x: (x / 255.0) -0.5))#, input_shape=(160,320,3)))
 #
 #model.add(Convolution2D(6,5,5,activation="relu"))
 #model.add(MaxPooling2D())
@@ -76,7 +76,7 @@ model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
 history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*3*2,
                     validation_data=valid_generator, nb_val_samples=len(valid_samples)*3*2,
-                    nb_epoch=40)
+                    nb_epoch=5)
 
 model.save('nvidia.h5', overwrite=True)
 
