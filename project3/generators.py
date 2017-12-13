@@ -22,13 +22,16 @@ def batchGenerator(samples, batchSize=33, resizeRatio=(1., 1.), imgPath='./data/
                 centerImg = imread(name)
                 centerAngle = float(batchSample[3])
 
+                # Adjust steering measurements for the side camera images
+                correction = 0.148 #0.2  # (angle/180), angle = ~26.6,
+
                 leftName = imgPath+batchSample[1].split('/')[-1]
                 leftImg = imread(leftName)
-                leftAngle = float(batchSample[3])
+                leftAngle = centerAngle + correction
 
                 rightName = imgPath+batchSample[2].split('/')[-1]
                 rightImg = imread(rightName)
-                rightAngle = float(batchSample[3])
+                rightAngle = centerAngle - correction
 
                 # crop image
                 #centerImg = centerImg[60:-22]
