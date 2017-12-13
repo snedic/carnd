@@ -8,7 +8,7 @@ def plotLossHistory(histObj, saveFileName='msePerEpoch.png', title='Model MSE Lo
     plt.switch_backend('agg') # https://stackoverflow.com/questions/35737116/runtimeerror-invalid-display-variable
     plt._backend_selection()
     plt.plot(histObj.history['loss'])
-    plt.plot(histObject.history['val_loss'])
+    plt.plot(histObj.history['val_loss'])
     plt.title(title)
     plt.ylabel(yLabel)
     plt.xlabel(xLabel)
