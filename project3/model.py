@@ -41,13 +41,6 @@ model.add(Cropping2D(cropping=((60, 22), (0, 0)), input_shape=(row, col, ch)))
 #normalization
 #model.add(Lambda(lambda x: (x / 127.5) - 1.))#, input_shape=(row, col, ch)))
 model.add(Lambda(lambda x: (x / 255.0) -0.5))#, input_shape=(160,320,3)))
-#
-#model.add(Convolution2D(6,5,5,activation="relu"))
-#model.add(MaxPooling2D())
-#model.add(Flatten())
-#model.add(Dense(120))
-#model.add(Dense(84))
-#model.add(Dense(1))
 
 #rest of the model
 model.add(Convolution2D(24, 5, 5, subsample=(2, 2), activation="relu"))
@@ -61,9 +54,8 @@ model.add(Dropout(dropRate))
 model.add(Convolution2D(64, 3, 3, subsample=(2, 2), activation="relu"))
 model.add(Dropout(dropRate))
 
-#model.add(MaxPooling2D())
-#`model.add(Dropout(dropRate))
 model.add(Flatten())
+
 model.add(Dense(100))
 model.add(Dropout(dropRate))
 model.add(Dense(50))
