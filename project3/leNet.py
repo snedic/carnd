@@ -28,15 +28,15 @@ valid_generator = batchGenerator(valid_samples,
 
 # Train a model
 row, col, ch = 160, 320, 3#39, 160, 3#58, 240, 3
-dropRate = 0.4
+dropRate = 0.25
 
 model = Sequential()
 
 #crop
-model.add(Cropping2D(cropping=((60, 22), (0, 0)), input_shape=(row, col, ch)))
+model.add(Cropping2D(cropping=((50, 20), (0, 0)), input_shape=(row, col, ch)))
 
 #normalization
-model.add(Lambda(lambda x: (x / 127.5) - 1.))
+model.add(Lambda(lambda x: (x / 255.0) - 0.5))#127.5) - 1.))
 
 #leNet
 model.add(Convolution2D(6, 5, 5, subsample=(2, 2), activation="relu"))
