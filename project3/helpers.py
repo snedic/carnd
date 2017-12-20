@@ -15,4 +15,4 @@ def plotLossHistory(histObj, saveFileName='msePerEpoch.png', title='Model MSE Lo
     plt.legend(legend, loc='upper right')
     #plt.show()
 
-    plt.savefig('LossPerEpoch.png')
+    plt.savefig(saveFileName)
