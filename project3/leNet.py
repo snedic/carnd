@@ -13,7 +13,7 @@ from keras.layers import Dropout
 from helpers import plotLossHistory
 
 samples = []
-with open('./trainData/driving_log.csv') as csvfile:
+with open('./trainData/driving_log_2016.csv') as csvfile:
     reader = csv.reader(csvfile)
     for line in reader:
         if not reader.line_num == 1:
