@@ -13,7 +13,7 @@ from keras.layers import Dropout
 from helpers import plotLossHistory
 
 samples = []
-with open('./trainData/driving_log_2017.csv') as csvfile:
+with open('./trainData/driving_log.csv') as csvfile:
     reader = csv.reader(csvfile)
     for line in reader:
         if not reader.line_num == 1:
@@ -76,7 +76,7 @@ model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
 history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*3*2,
                     validation_data=valid_generator, nb_val_samples=len(valid_samples)*3*2,
-                    nb_epoch=5)
+                    nb_epoch=15)
 
 model.save('nvidia.h5', overwrite=True)
 
