@@ -9,7 +9,6 @@ def batchGenerator(samples, batchSize=33, resizeRatio=(1., 1.), imgPath='./data/
                 resizeRatio - resize the image by this ratio, default is (1.,1.) meaning no change
                 imgPath - the directory path to the folder containing the images, default is ./data/IMG'''
     nSamples = len(samples)
-#    batchSize = int(batchSize/3)
     while 1:
         shuffle(samples)
         for offset in range(0, nSamples, batchSize):
@@ -23,7 +22,7 @@ def batchGenerator(samples, batchSize=33, resizeRatio=(1., 1.), imgPath='./data/
                 centerAngle = float(batchSample[3])
 
                 # Adjust steering measurements for the side camera images
-                correction = 0.148 #0.2  # (angle/180), angle = ~26.6,
+                correction = 0.15#0.148 #0.2  # (angle/180), angle = ~26.6,
 
                 leftName = imgPath+batchSample[1].split('/')[-1]
                 leftImg = imread(leftName)
@@ -43,17 +42,17 @@ def batchGenerator(samples, batchSize=33, resizeRatio=(1., 1.), imgPath='./data/
                 images.append(leftImg)
                 images.append(rightImg)
 
-                images.append(fliplr(centerImg))
-                images.append(fliplr(leftImg))
-                images.append(fliplr(rightImg))
+                #images.append(fliplr(centerImg))
+                #images.append(fliplr(leftImg))
+                #images.append(fliplr(rightImg))
 
                 angles.append(centerAngle)
                 angles.append(leftAngle)
                 angles.append(rightAngle)
 
-                angles.append(-centerAngle)
-                angles.append(-leftAngle)
-                angles.append(-rightAngle)
+                #angles.append(-centerAngle)
+                #angles.append(-leftAngle)
+                #angles.append(-rightAngle)
 
             # trim image to only see section with road
             X_train = array(images)

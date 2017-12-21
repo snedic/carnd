@@ -13,30 +13,29 @@ from keras.layers import Dropout
 from helpers import plotLossHistory
 
 samples = []
-with open('./trainData/driving_log.csv') as csvfile:
+with open('./trainData/driving_log_2017.csv') as csvfile:
     reader = csv.reader(csvfile)
     for line in reader:
         if not reader.line_num == 1:
             samples.append(line)
 train_samples, valid_samples = train_test_split(samples, test_size=0.2)
-#resizeImgRatio = (0.5, 0.5)
 train_generator = batchGenerator(train_samples,
-                                 batchSize=33,
+                                 batchSize=32,
                                  #resizeRatio=resizeImgRatio,
                                  imgPath='./trainData/IMG/')
 valid_generator = batchGenerator(valid_samples,
-                                 batchSize=33,
+                                 batchSize=32,
                                  #resizeRatio=resizeImgRatio,
                                  imgPath='./trainData/IMG/')
 
 # Train a model
 row, col, ch = 160, 320, 3#39, 160, 3#58, 240, 3
-dropRate = 0.0
+dropRate = 0.25
 #https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/
 model = Sequential()
 
 #crop
-model.add(Cropping2D(cropping=((60, 20), (0, 0)), input_shape=(row, col, ch)))
+model.add(Cropping2D(cropping=((50, 20), (0, 0)), input_shape=(row, col, ch)))
 
 #normalization
 #model.add(Lambda(lambda x: (x / 127.5) - 1.))#, input_shape=(row, col, ch)))
@@ -62,7 +61,6 @@ model.add(Convolution2D(64, 3, 3, subsample=(2, 2), activation="relu"))
 model.add(Dropout(dropRate))
 
 #model.add(MaxPooling2D())
-#`model.add(Dropout(dropRate))
 model.add(Flatten())
 model.add(Dense(100))
 model.add(Dropout(dropRate))
@@ -74,10 +72,10 @@ model.add(Dense(1))
 
 
 model.compile(loss='mse', optimizer='adam')
-history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*3*2,
-                    validation_data=valid_generator, nb_val_samples=len(valid_samples)*3*2,
+history_object = model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*3,
+                    validation_data=valid_generator, nb_val_samples=len(valid_samples)*3,
                     nb_epoch=10)
 
 model.save('nvidia.h5', overwrite=True)
 
-plotLossHistory(history_object, saveFileName='msePerEpoch_myModel.png')
+plotLossHistory(history_object, saveFileName='msePerEpoch_nvidia.png')
