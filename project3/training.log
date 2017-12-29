@@ -1,0 +1,37 @@
+(carnd-term1) carnd@ip-172-31-26-220:~/carnd/project3$ python model.py 
+Using TensorFlow backend.
+I tensorflow/stream_executor/dso_loader.cc:128] successfully opened CUDA library libcublas.so locally
+I tensorflow/stream_executor/dso_loader.cc:128] successfully opened CUDA library libcudnn.so locally
+I tensorflow/stream_executor/dso_loader.cc:128] successfully opened CUDA library libcufft.so locally
+I tensorflow/stream_executor/dso_loader.cc:128] successfully opened CUDA library libcuda.so.1 locally
+I tensorflow/stream_executor/dso_loader.cc:128] successfully opened CUDA library libcurand.so locally
+Epoch 1/10
+I tensorflow/stream_executor/cuda/cuda_gpu_executor.cc:937] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:885] Found device 0 with properties: 
+name: GRID K520
+major: 3 minor: 0 memoryClockRate (GHz) 0.797
+pciBusID 0000:00:03.0
+Total memory: 3.94GiB
+Free memory: 3.91GiB
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:906] DMA: 0 
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:916] 0:   Y 
+I tensorflow/core/common_runtime/gpu/gpu_device.cc:975] Creating TensorFlow device (/gpu:0) -> (device: 0, name: GRID K520, pci bus id: 0000:00:03.0)
+60906/60906 [==============================] - 178s - loss: 0.0144 - val_loss: 0.0103
+Epoch 2/10
+60906/60906 [==============================] - 164s - loss: 0.0117 - val_loss: 0.0096
+Epoch 3/10
+60906/60906 [==============================] - 163s - loss: 0.0111 - val_loss: 0.0093
+Epoch 4/10
+60906/60906 [==============================] - 163s - loss: 0.0106 - val_loss: 0.0087
+Epoch 5/10
+60906/60906 [==============================] - 163s - loss: 0.0103 - val_loss: 0.0083
+Epoch 6/10
+60906/60906 [==============================] - 163s - loss: 0.0099 - val_loss: 0.0078
+Epoch 7/10
+60906/60906 [==============================] - 164s - loss: 0.0097 - val_loss: 0.0084
+Epoch 8/10
+60906/60906 [==============================] - 164s - loss: 0.0094 - val_loss: 0.0078
+Epoch 9/10
+60906/60906 [==============================] - 164s - loss: 0.0093 - val_loss: 0.0073
+Epoch 10/10
+60906/60906 [==============================] - 163s - loss: 0.0091 - val_loss: 0.0073
