@@ -19,10 +19,9 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: https://devblogs.nvidia.com/parallelforall/wp-content/uploads/2016/08/cnn-architecture.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
+[image2]: ./centerLaneDriving.jpg "Center lane driving image"
+[image3]: ./rightRecovery.jpg "Recovery Image"
+[image4]: ./leftRecovery.jpg "Recovery Image"
 [image6]: ./examples/placeholder_small.png "Normal Image"
 [image7]: ./examples/placeholder_small.png "Flipped Image"
 
@@ -113,26 +112,15 @@ To capture good driving behavior, I first recorded two laps on track one using c
 
 ![alt text][image2]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to recover appropriately. These images show what a recovery looks like starting from ... :
 
 ![alt text][image3]
 ![alt text][image4]
-![alt text][image5]
 
-Then I repeated this process on track two in order to get more data points.
+To augment the data sat, I also flipped images and angles thinking that this would help provide more right turns. 
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had larger images than were provided in the training set. I then preprocessed this data by resizing the images to 323x32x3, converting to grayscale, and applying the same normalization as applied during training and validation steps.
-
-Having pulled the images from various websites, I noticed a few potential issues.  First, the images were of various dimensions, so resizing them all to 32x32x3 most likely had different levels of data loss.  Second, the images had different angles on the signs, with varying backgrounds (clouds, trees, etc.) that could impact the overall ability of the model to classify the images.  I did not crop the images at all.  Doing this could help eliminate background oise in the images thus helping the model to more easily identifying the proper label.  Finally, some of the images used were from websites that included watermarks.  These watermarks are embedded all over the images.  Resizing the images should have reduced the negative impact of the watermarks, however, they would still degrade the images and make it harder for a model to classify them.
-
+After the collection process, I cropped the images to ignore anything above the horizon (i.e. trees, sky, etc.) and anything below the tip of the car hood (i.e. the car hood).  Essentially forcing the model to focus on the road.
 
 Prior to training, I randomly shuffled the data set and used the validation dataset provided. 
 
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was between 100 and 200 for a couple models and between 300 and 400 for another as is evidenced by the various charts in my notebook. I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was approimately 10 for the nvidia model and the nearly 1GB of training data.
