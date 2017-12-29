@@ -21,9 +21,9 @@ The goals / steps of this project are the following:
 
 [image1]: ./images/undistortedChessboard.png "Undistorted"
 [image2]: ./images/Straight_lines1.jpg "Road Transformed"
-[image3]: ./images/undistortedStraight_lines1.jpg "Binary Example"
-[image4]: ./images/thresholdstraight_lines1.jpg "Threshold Example"
-[image5]: ./images/warpedstraight_lines1.jpg "Warp Example"
+[image3]: ./images/undistortedStraight_lines1.png "Binary Example"
+[image4]: ./images/thresholdstraight_lines1.png "Threshold Example"
+[image5]: ./images/warpedstraight_lines1.jpng "Warp Example"
 [image5]: ./examples/color_fit_lines.jpg "Fit Visual"
 [image6]: ./examples/example_output.jpg "Output"
 [video1]: ./result.mp4 "Video"
