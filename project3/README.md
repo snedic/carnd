@@ -18,7 +18,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
+[image1]: https://devblogs.nvidia.com/parallelforall/wp-content/uploads/2016/08/cnn-architecture.png "Model Visualization"
 [image2]: ./examples/placeholder.png "Grayscaling"
 [image3]: ./examples/placeholder_small.png "Recovery Image"
 [image4]: ./examples/placeholder_small.png "Recovery Image"
@@ -87,21 +87,21 @@ For details about how I created the training data, see the next section.
 
 The overall strategy for deriving a model architecture was to ...
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+My first step was to use a convolution neural network model similar to the LeNet architecture. I thought this model might be appropriate as a first step because it was straight forward to implement.  I then opted for the more complex Nvidia architecture.
 
 In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
 
-To combat the overfitting, I modified the model so that ...
+To combat the overfitting, I modified the model so that it utilized dropout layers to minimize overfitting.
 
-Then I ... 
+Then I added additional training data, nearly 1 gb worth of images.
 
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
+The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track.  Namely, there were issues when I would come across water.  I thought there was a bug in my code or that I had not trained enough on the turns.  So I added more passes through the turns and at the bridge.  Ultimately, it turned out the issue was not in my code, nor in my training data.  The issue was a conflict between how I loaded the images for traning (using CV2) and how drive.py loaded the images (using PIL).  To improve the driving behavior, I modified the drive.py code to use CV2 instead.
 
 At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+The final model architecture consisted of a 3 convolutional layers with a 5x5 kernel, 2 convolutional layeres with a 3x3 kernel, followed by 3 fully connected layers and a final output layer.  Eachlayer also includes dropout with a rate of 0.25.  See model.py lines 52-71.
 
 Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
 
