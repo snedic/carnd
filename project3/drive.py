@@ -12,6 +12,7 @@ from PIL import Image
 from flask import Flask
 from io import BytesIO
 from cv2 import resize
+import cv2
 
 from keras.models import load_model
 import h5py
@@ -62,7 +63,8 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
 
-        image_array = np.asarray(image)
+#       image_array = np.asarray(image)
+        image_array = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2RGB)
 
 #        # crop image
 #        image_array = image_array[60:-22]
@@ -73,7 +75,7 @@ def telemetry(sid, data):
 
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
 
-        throttle = controller.update(float(speed)/3)
+        throttle = controller.update(float(speed))
 
         print(steering_angle, throttle)
         send_control(steering_angle, throttle)
