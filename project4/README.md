@@ -24,8 +24,8 @@ The goals / steps of this project are the following:
 [image3]: ./images/undistortedStraight_lines1.jpg "Binary Example"
 [image4]: ./images/thresholdstraight_lines1.png "Threshold Example"
 [image5]: ./images/warpedstraight_lines1.png "Warp Example"
-[image5]: ./examples/color_fit_lines.jpg "Fit Visual"
-[image6]: ./examples/example_output.jpg "Output"
+[image6]: ./images/histowarpedstraight_lines1.png "Fit Visual"
+[image7]: ./images/detectedstraight_lines1.png "Output"
 [video1]: ./result.mp4 "Video"
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/571/view) Points
@@ -73,7 +73,7 @@ I used a combination of color and gradient thresholds to generate a binary image
 
 #### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
 
-The code for my perspective transform includes a function called `warp_image()`, which appears in lines 138 through 157 in the file `proj4Tools.py`.  The `warp_image()` function takes as inputs an image (`img`), as well as source (`src`) and destination (`dst`) points, and whether the image warping needs to be inverted.  This last parameter was found necessary when I was testing the warping with a street sign.  The sign was angled a certain way that required the warping in the opposite direction in order to properly display the text in a flattened manner. I chose to hardcode the source and destination points on line 534 and 535 of `proj4Tools.py` in the following manner:
+The code for my perspective transform includes a function called `warp_image()`, which appears in lines 138 through 157 in the file `proj4Tools.py`.  The `warp_image()` function takes as inputs an image (`img`), as well as source (`srcCoords`) and destination (`dstCoords`) points, and whether the image warping needs to be inverted.  This last parameter was found necessary when I was testing the warping with a street sign.  The sign was angled a certain way that required the warping in the opposite direction in order to properly display the text in a flattened manner. I chose to hardcode the source and destination points on line 534 and 535 of `proj4Tools.py` in the following manner:
 
 ```python
 srcCoords = np.float32( [[578, 460], [705, 460], [1122, 719], [190, 719]])
@@ -89,25 +89,29 @@ This resulted in the following source and destination points:
 | 1122, 719     | 1122, 719      |
 | 190, 719      | 180, 719        |
 
-I verified that my perspective transform was working as expected by drawing the `src` and `dst` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
-
-![alt text][image4]
-
-#### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
-
-Then I did some other stuff and fit my lane lines with a 2nd order polynomial kinda like this:
+I verified that my perspective transform was working as expected by drawing the `srcCoords` and `dstCoords` points onto a test image and its warped counterpart to verify that the lines appear parallel in the warped image.
 
 ![alt text][image5]
 
+#### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
+
+Then I detected the lines pixels using sliding windows and fit my lane lines with a 2nd order polynomial kinda like this:
+
+![alt text][image6]
+
+Using the binary warped image I used a histogram to identify which pixels were associated with a line on the left half and the right halves of the image.
+
+Note: Once the sliding windows was successful, I was able to find the line pixels more easily for future images by looking within a boundary the previously found lines.
+
 #### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I did this in lines # through # in my code in `my_other_file.py`
+I did this in function `get_curve_radius()` at lines 452 through 258 in my code in `proj4Tools.py`
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines # through # in my code in `yet_another_file.py` in the function `map_lane()`.  Here is an example of my result on a test image:
+I implemented this step in lines 451 where I call function `get_detected_lane()` defined at lines 486 through 505 in my code in `proj4Tools.py` in the function `run_pipeline()`.  Here is an example of my result on a test image:
 
-![alt text][image6]
+![alt text][image7]
 
 ---
 
@@ -115,7 +119,7 @@ I implemented this step in lines # through # in my code in `yet_another_file.py`
 
 #### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-Here's a [link to my video result](./project_video.mp4)
+Here's a [link to my video result](./result.mp4)
 
 ---
 
@@ -123,4 +127,6 @@ Here's a [link to my video result](./project_video.mp4)
 
 #### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+I ran into some issues when the video drove through shaddows.  To avoid misinterpreting the lane, I measure the distance between the two lines.  I had checked several points in the video/test files and found the distance to be in the range of ~890 to 925.  Because of this I added a sanity check for the distance between the lines.  The current threshold is set to a range of 850 to 950.  For images outside these bounds, the values are not stored in the line objects.  I store the last 10 image line details.  If an image is skipped, I still pop values out of the arrays as if I stored the details.  When the arrays size drops below 3, I reassess the line detection with the sliding window technique again.
+
+To improve my pipeline, I could adjust the line distance thresholds to be more tightly bound.  I could also adjust the minimum size of the array to be more than 3 (i.e. 5 or 6) which would force the pipeline to search for pixels more often than it currently does under a bad situation.  On top of this, I could increase the number of previous detections stored.  How many to store would require some additional analysis.
