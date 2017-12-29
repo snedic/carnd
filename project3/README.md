@@ -36,14 +36,19 @@ The goals / steps of this project are the following:
 
 My project includes the following files:
 * model.py containing the script to create and train the model
+* helpers.py containing helper functions used by my models
+* generators.py containing the generator used by my models
 * drive.py for driving the car in autonomous mode
-* model.h5 containing a trained convolution neural network 
-* writeup_report.md or writeup_report.pdf summarizing the results
+* nvidia.h5 containing a trained convolution neural network 
+* readme.md or writeup_report.pdf summarizing the results
+* run1.mp4 containing a video of a successful run around the track
+* msePerEpoch_nvidia.png containing a graph of the training/validation error values
+* training.log containing the output of my final training
 
 #### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
 ```sh
-python drive.py model.h5
+python drive.py nvidia.h5
 ```
 
 #### 3. Submission code is usable and readable
@@ -54,23 +59,25 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+My model is an implemenation of the suggested nvidia model.  https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/
+
+My model consists of a 3 convolutional layers with a 5x5 kernel, 2 convolutional layeres with a 3x3 kernel, followed by 3 fully connected layers and a final output layer.  Eachlayer also includes dropout with a rate of 0.25.  See model.py lines 52-71.
 
 The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
+The model contains dropout layers at every layer throughout the model in order to reduce overfitting (model.py lines 52-71). 
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 16-29). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track. (see run1.mp4)
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 74).
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
+Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road, and driving the course both directions.  I also used all three camera angles with a correction of 0.15.  I calculated the value to be 0.148 by estimating the angle from each side camera to be ~26.6.  I opted to round the value to 0.15.
 
 For details about how I created the training data, see the next section. 
 
