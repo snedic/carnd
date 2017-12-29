@@ -20,8 +20,8 @@ The goals / steps of this project are the following:
 
 [image1]: https://devblogs.nvidia.com/parallelforall/wp-content/uploads/2016/08/cnn-architecture.png "Model Visualization"
 [image2]: ./centerLaneDriving.jpg "Center lane driving image"
-[image3]: ./rightRecovery.png "Recovery Image"
-[image4]: ./leftRecovery.png "Recovery Image"
+[image3]: ./rightRecovery.jpg "Recovery Image"
+[image4]: ./leftRecovery.jpg "Recovery Image"
 [image6]: ./examples/placeholder_small.png "Normal Image"
 [image7]: ./examples/placeholder_small.png "Flipped Image"
 
