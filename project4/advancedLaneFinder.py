@@ -4,10 +4,18 @@ from glob import glob
 from proj4Tools import calibrate_camera, run_pipeline
 from line import Line
 from moviepy.editor import VideoFileClip
+from proj4Tools import display_images
+import cv2
 
 # (1) Camera Calibration
 mtx, dist = calibrate_camera()
 leftLine, rightLine = Line(), Line()
+
+# Remove the distortion from an image
+img = mpimg.imread('camera_cal/calibration1.jpg')
+undistImg = cv2.undistort(img, mtx, dist, None, mtx)
+
+display_images(imgArr=[img, undistImg], imgLabels=['Original', 'Undistorted'], isImgGray=[0,0], rows=1)
 
 
 def process_image(frame):
@@ -40,5 +48,5 @@ def run(input,output):
 
 
 #run_tests()
-run(input='CarND-Advanced-Lane-Lines/project_video.mp4', output='./result.mp4')
+#run(input='CarND-Advanced-Lane-Lines/project_video.mp4', output='./result.mp4')
 

@@ -3,6 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 from matplotlib import image as mpimg
 from matplotlib.patches import Polygon
+from glob import glob
 from line import Line
 from math import ceil
 
@@ -21,29 +22,31 @@ def calibrate_undistort(img, objPts, imgPts):
     # Undistort the image
     return cv2.undistort(img, mtx, dist, None, mtx)
 
-def calibrate_camera(calImg='camera_cal/calibration1.jpg'):
+def calibrate_camera():#calImg='camera_cal/calibration1.jpg'):
+    images = glob('camera_cal/calibration*.jpg')
 
     # Arrays to store object points and image points from all the images
     objPoints = [] # 3D point array in real world space
     imgPoints = [] # 2D point array in image space
 
     # Prepare object points, like (0,0,0, (1,0,0), .... (7,5,0)
-    objP = np.zeros((5*9, 3), np.float32)
-    objP[:, :2] = np.mgrid[0:9, 0:5].T.reshape(-1, 2) # x, y coordinates
+    objP = np.zeros((6*9, 3), np.float32)
+    objP[:, :2] = np.mgrid[0:9, 0:6].T.reshape(-1, 2) # x, y coordinates
 
     # Read in a calibration images
-    img = mpimg.imread(calImg)
+    for calImg in images:
+        img = mpimg.imread(calImg)
 
-    # Convert image to grayscale
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # Convert image to grayscale
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # Find the chessboard corners
-    ret, corners = cv2.findChessboardCorners(gray, (9, 5), None)
+        # Find the chessboard corners
+        ret, corners = cv2.findChessboardCorners(gray, (9, 6), None)
 
-    # If corners are found, add object points, image points
-    if ret is True:
-        imgPoints.append(corners)
-        objPoints.append(objP)
+        # If corners are found, add object points, image points
+        if ret is True:
+            imgPoints.append(corners)
+            objPoints.append(objP)
 
     # Calibrate and remove the distortion from the image
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objPoints, imgPoints, img.shape[1::-1], None, None)
