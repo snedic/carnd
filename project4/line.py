@@ -4,6 +4,7 @@ import numpy as np
 class Line():
     def __init__(self):
         self.n = 10
+        self.skippedFrames = 0
 
         # Define conversions in x and y from pixels space to meters
         self.ym_per_pix = 30. / 720  # meters per pixel in y dimension
@@ -90,13 +91,17 @@ class Line():
         #    self.recent_xfitted.pop()
         #self.best_fit = np.mean(self.recent_xfitted)
         #self.radius_of_curvature = self.previous_radius_of_curvature
-        if len(self.recent_xfitted) >= self.n:
-            self.recent_xfitted.pop()
 
-        if len(self.recent_diffs) >= self.n:
-            self.recent_diffs.pop()
+        self.skippedFrames += 1
 
-        self.detected = not len(self.recent_xfitted) < 3
+        #if len(self.recent_xfitted) >= self.n:
+        #    self.recent_xfitted.pop()
+
+        #if len(self.recent_diffs) >= self.n:
+        #    self.recent_diffs.pop()
+
+        #self.detected = not len(self.recent_xfitted) < 3
+        self.detected = self.skippedFrames < 3
 
     def store_values(self, binary_img, curr_fit, curr_xy):
         ploty = np.linspace(0, binary_img.shape[0] - 1, binary_img.shape[0])
@@ -123,7 +128,9 @@ class Line():
         self.bestx = np.mean(self.allx)
 
         # update the average best fit coefficients
-        self.best_fit = np.mean(self.recent_xfitted)
+
+        #self.best_fit = self.recent_xfitted[-1] if(len(self.recent_xfitted) < 3) else np.mean(self.recent_xfitted)
+        self.best_fit = np.mean(self.recent_xfitted, axis=0)
 
         # set the radius of curvature
         self.previous_radius_of_curvature = self.radius_of_curvature

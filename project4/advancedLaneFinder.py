@@ -11,12 +11,6 @@ import cv2
 mtx, dist = calibrate_camera()
 leftLine, rightLine = Line(), Line()
 
-# Remove the distortion from an image
-img = mpimg.imread('camera_cal/calibration1.jpg')
-undistImg = cv2.undistort(img, mtx, dist, None, mtx)
-
-display_images(imgArr=[img, undistImg], imgLabels=['Original', 'Undistorted'], isImgGray=[0,0], rows=1)
-
 
 def process_image(frame):
     # NOTE: The output you return should be a color image (3 channel) for processing video below
@@ -27,6 +21,12 @@ def process_image(frame):
 
 
 def run_tests():
+    # Remove the distortion from an image
+    img = mpimg.imread('camera_cal/calibration1.jpg')
+    undistImg = cv2.undistort(img, mtx, dist, None, mtx)
+
+    # Test pipeline
+    display_images(imgArr=[img, undistImg], imgLabels=['Original', 'Undistorted'], isImgGray=[0, 0], rows=1)
     images = glob('test_images/*.jpg')
     for fn in images:
         img = mpimg.imread(fn)
@@ -48,5 +48,5 @@ def run(input,output):
 
 
 #run_tests()
-#run(input='CarND-Advanced-Lane-Lines/project_video.mp4', output='./result.mp4')
+run(input='CarND-Advanced-Lane-Lines/project_video.mp4', output='./result.mp4')
 

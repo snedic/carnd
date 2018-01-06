@@ -22,7 +22,7 @@ def calibrate_undistort(img, objPts, imgPts):
     # Undistort the image
     return cv2.undistort(img, mtx, dist, None, mtx)
 
-def calibrate_camera():#calImg='camera_cal/calibration1.jpg'):
+def calibrate_camera(calImg='camera_cal/calibration1.jpg'):
     images = glob('camera_cal/calibration*.jpg')
 
     # Arrays to store object points and image points from all the images
@@ -34,8 +34,8 @@ def calibrate_camera():#calImg='camera_cal/calibration1.jpg'):
     objP[:, :2] = np.mgrid[0:9, 0:6].T.reshape(-1, 2) # x, y coordinates
 
     # Read in a calibration images
-    for calImg in images:
-        img = mpimg.imread(calImg)
+    for distImg in images:
+        img = mpimg.imread(distImg)
 
         # Convert image to grayscale
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -47,8 +47,10 @@ def calibrate_camera():#calImg='camera_cal/calibration1.jpg'):
         if ret is True:
             imgPoints.append(corners)
             objPoints.append(objP)
+            #print(distImg)
 
     # Calibrate and remove the distortion from the image
+    img = mpimg.imread(calImg)
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objPoints, imgPoints, img.shape[1::-1], None, None)
 
     return (mtx, dist)
@@ -493,8 +495,10 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine):
     color_warp = np.dstack((warp_zero, warp_zero, warp_zero))
 
     # Recast the x and y points into usable format for cv2.fillPoly()
-    pts_left = np.array([np.transpose(np.vstack([leftLine.recent_xfitted[-1], ploty]))])
-    pts_right = np.array([np.flipud(np.transpose(np.vstack([rightLine.recent_xfitted[-1], ploty])))])
+    #pts_left = np.array([np.transpose(np.vstack([leftLine.recent_xfitted[-1], ploty]))])
+    #pts_right = np.array([np.flipud(np.transpose(np.vstack([rightLine.recent_xfitted[-1], ploty])))])
+    pts_left = np.array([np.transpose(np.vstack([leftLine.best_fit, ploty]))])
+    pts_right = np.array([np.flipud(np.transpose(np.vstack([rightLine.best_fit, ploty])))])
     pts = np.hstack((pts_left, pts_right))
 
     # Draw the lane onto the warped blank image
@@ -502,8 +506,20 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine):
 
     # Warp the blank back to original image space using inverse perspective matrix (Minv)
     newwarp = cv2.warpPerspective(color_warp, Minv, (img.shape[1], img.shape[0]))
+
     # Combine the result with the original image
     result = cv2.addWeighted(undistImg, 1, newwarp, 0.3, 0)
+
+    # Add text to the image
+    font = cv2.FONT_ITALIC
+    txtLines = [''
+        '{:.3f} m --- Distance from center --- {:.3f} m'.format(leftLine.line_base_pos, rightLine.line_base_pos),
+        '{:.1f} m --- Radius of Curvature --- {:.1f} m'.format(leftLine.radius_of_curvature, rightLine.radius_of_curvature)
+                ]
+    for i in range(len(txtLines)):
+        txt = txtLines[i]
+        cv2.putText(result, text=txt.strip(), org=(int((result.shape[1] - 650)/2), result.shape[0]-10-40*i),
+                    fontFace=font, fontScale=0.8, color=(255, 255, 255), thickness=2)
 
     return result
 
@@ -543,7 +559,7 @@ def run_pipeline(img, mtx, dist, leftLine, rightLine):
 
     # Sanity Check
     lane_width = np.mean(right_xy[0]) - np.mean(left_xy[0])
-    if lane_width > 850. and lane_width < 950.:
+    if lane_width > 880. and lane_width < 930.:
         # Store line values
         leftLine.store_values(binary_img=warpImg, curr_fit=left_fit, curr_xy=left_xy)
         rightLine.store_values(binary_img=warpImg, curr_fit=right_fit, curr_xy=right_xy)
