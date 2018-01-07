@@ -495,10 +495,17 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine):
     color_warp = np.dstack((warp_zero, warp_zero, warp_zero))
 
     # Recast the x and y points into usable format for cv2.fillPoly()
-    #pts_left = np.array([np.transpose(np.vstack([leftLine.recent_xfitted[-1], ploty]))])
-    #pts_right = np.array([np.flipud(np.transpose(np.vstack([rightLine.recent_xfitted[-1], ploty])))])
-    pts_left = np.array([np.transpose(np.vstack([leftLine.best_fit, ploty]))])
-    pts_right = np.array([np.flipud(np.transpose(np.vstack([rightLine.best_fit, ploty])))])
+    if leftLine.skippedFrames > 0:
+        pts_left = np.array([np.transpose(np.vstack([leftLine.best_fit, ploty]))])
+    else:
+        pts_left = np.array([np.transpose(np.vstack([leftLine.recent_xfitted[-1], ploty]))])
+
+    if rightLine.skippedFrames > 0:
+        pts_right = np.array([np.flipud(np.transpose(np.vstack([rightLine.best_fit, ploty])))])
+    else:
+        pts_right = np.array([np.flipud(np.transpose(np.vstack([rightLine.recent_xfitted[-1], ploty])))])
+
+    #print(pts_right)
     pts = np.hstack((pts_left, pts_right))
 
     # Draw the lane onto the warped blank image
@@ -512,8 +519,8 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine):
 
     # Add text to the image
     font = cv2.FONT_ITALIC
-    txtLines = [''
-        '{:.3f} m --- Distance from center --- {:.3f} m'.format(leftLine.line_base_pos, rightLine.line_base_pos),
+    txtLines = [
+        'Offset --- {:.3f} m'.format(rightLine.line_base_pos + leftLine.line_base_pos),
         '{:.1f} m --- Radius of Curvature --- {:.1f} m'.format(leftLine.radius_of_curvature, rightLine.radius_of_curvature)
                 ]
     for i in range(len(txtLines)):
@@ -558,10 +565,21 @@ def run_pipeline(img, mtx, dist, leftLine, rightLine):
         left_fit, right_fit, left_xy, right_xy = find_line_pixels(warpImg, leftLine.current_fit, rightLine.current_fit)
 
     # Sanity Check
+    bot_lane_width = np.median(right_xy[0][:1000]) - np.median(left_xy[0][:100])
+    top_lane_width = np.median(right_xy[0][-100:]) - np.median(left_xy[0][-100:])
+
+    #print(len(right_xy[0]))
+
     lane_width = np.mean(right_xy[0]) - np.mean(left_xy[0])
-    if lane_width > 880. and lane_width < 930.:
+    #print('BOT: %d' % bot_lane_width) # ~875
+    #print('TOP: %d' % top_lane_width) # ~126
+    if abs(900 - bot_lane_width) <= 80:# and abs(815 - top_lane_width) <= 100 :
+    #if bot_lane_width > 850. and bot_lane_width < 1000:#930.:
         # Store line values
+        leftLine.skippedFrames = 0
         leftLine.store_values(binary_img=warpImg, curr_fit=left_fit, curr_xy=left_xy)
+
+        leftLine.skippedFrames = 0
         rightLine.store_values(binary_img=warpImg, curr_fit=right_fit, curr_xy=right_xy)
     else:
         leftLine.frame_skipped()

@@ -101,7 +101,7 @@ class Line():
         #    self.recent_diffs.pop()
 
         #self.detected = not len(self.recent_xfitted) < 3
-        self.detected = self.skippedFrames < 3
+        self.detected = self.skippedFrames < 2
 
     def store_values(self, binary_img, curr_fit, curr_xy):
         ploty = np.linspace(0, binary_img.shape[0] - 1, binary_img.shape[0])
