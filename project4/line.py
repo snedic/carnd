@@ -35,9 +35,11 @@ class Line():
 
         #difference in fit coefficients between last and new fits
         self.diffs = np.array([0,0,0], dtype='float')
+        self.previous_diffs = self.diffs
         self.recent_diffs = []
 
         #x values for detected line pixels
+        self.previous_xy = None
         self.allx = None
 
         #y values for detected line pixels
@@ -86,22 +88,22 @@ class Line():
         return True#len(self.recent_diffs) < 2 or (self.diffs > (4 * np.std(self.recent_diffs))).all()
 
     def frame_skipped(self):
-        #self.current_fit = self.previous_fit
-        #if len(self.recent_xfitted):
-        #    self.recent_xfitted.pop()
-        #self.best_fit = np.mean(self.recent_xfitted)
-        #self.radius_of_curvature = self.previous_radius_of_curvature
-
         self.skippedFrames += 1
 
-        #if len(self.recent_xfitted) >= self.n:
-        #    self.recent_xfitted.pop()
+        # remove last added frame from the arrays
+        self.recent_xfitted.pop()
+        self.recent_diffs.pop()
 
-        #if len(self.recent_diffs) >= self.n:
-        #    self.recent_diffs.pop()
-
-        #self.detected = not len(self.recent_xfitted) < 3
+        # check if we need to reassess the lane detection with a sliding window
         self.detected = self.skippedFrames < 2
+
+        # reset current values
+        self.current_fit = self.previous_fit
+        self.diffs = self.previous_diffs
+        self.allx, self.ally = self.previous_xy
+        self.bestx = np.mean(self.allx)
+        self.best_fit = np.mean(self.recent_xfitted, axis=0)
+        self.radius_of_curvature = self.previous_radius_of_curvature
 
     def store_values(self, binary_img, curr_fit, curr_xy):
         ploty = np.linspace(0, binary_img.shape[0] - 1, binary_img.shape[0])
@@ -115,10 +117,12 @@ class Line():
         self.current_fit = curr_fit
 
         # update differences
+        self.previous_diffs = self.diffs
         self.diffs = diffs
         self.append_prev_diffs(self.diffs)
 
         # store detected line pixels
+        self.previous_xy = [self.allx, self.ally]
         self.allx, self.ally = curr_xy
 
         # store the fit lines
@@ -128,8 +132,6 @@ class Line():
         self.bestx = np.mean(self.allx)
 
         # update the average best fit coefficients
-
-        #self.best_fit = self.recent_xfitted[-1] if(len(self.recent_xfitted) < 3) else np.mean(self.recent_xfitted)
         self.best_fit = np.mean(self.recent_xfitted, axis=0)
 
         # set the radius of curvature
@@ -137,7 +139,6 @@ class Line():
         self.radius_of_curvature = self.get_scaled_curve_radius(ploty, fitx)
 
         # store distance (m) of vehicle center to the line
-        #print(binary_img.shape)
         base_pos = binary_img.shape[1] / 2
         self.line_base_pos = (base_pos - fitx[-1]) * self.xm_per_pix
 
