@@ -3,7 +3,7 @@ import numpy as np
 # Define a class to receive the characteristics of each line detection
 class Line():
     def __init__(self):
-        self.n = 10
+        self.n = 30
         self.skippedFrames = 0
 
         # Define conversions in x and y from pixels space to meters

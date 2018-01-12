@@ -488,6 +488,42 @@ def get_scaled_curve_radius(warpedImage, left_fit, right_fit):
     #print(left_curverad, 'm', right_curverad, 'm')
     # Example values: 632.1 m    626.2 m
 
+def sanityCheck(ptsRt, ptsLft, expectedLaneWidth = 900, laneWidthThreshold=100):
+
+    ptsRt = np.flipud(ptsRt[0])
+    bot_coords = (ptsLft[0][0], ptsRt[0])
+    top_coords = (ptsLft[0][-1], ptsRt[-1])
+
+    bot_lane_width = bot_coords[1][0] - bot_coords[0][0] #np.median(ptsRt[0][:1000]) - np.median(left_xy[0][:1000])
+    top_lane_width = top_coords[1][0] - top_coords[0][0]#np.median(right_xy[0][-1000:]) - np.median(left_xy[0][-1000:])
+
+
+    #print("BottomCoords: {}".format(bot_coords))
+    #print("Bottom: %d" % bot_lane_width)
+    #print("Bottom Diff: %d" % (bot_lane_width - expectedLaneWidth))
+    #print("TopCoords: {}".format(top_coords))
+    #print("Top: %d" % top_lane_width)
+    #print("Top Diff: %d" % (top_lane_width - expectedLaneWidth))
+
+    #if abs(expectedLaneWidth - bot_lane_width) <= 100 and abs(expectedLaneWidth - top_lane_width) <= 100:#abs(815 - top_lane_width) <= 80:
+    return abs(expectedLaneWidth - bot_lane_width) <= laneWidthThreshold and \
+           abs(expectedLaneWidth - top_lane_width) <= laneWidthThreshold
+
+    #if bot_lane_width < 931 and top_lane_width < //
+    #    print("GOOD FRAME")
+    #else:
+    #    print("SKIPPED FRAME")
+#    #if bot_lane_width > 850. and bot_lane_width < 1000:#930.:
+#        # Store line values
+#        leftLine.skippedFrames = 0
+#        leftLine.store_values(binary_img=warpImg, curr_fit=left_fit, curr_xy=left_xy)
+#
+#        leftLine.skippedFrames = 0
+#        rightLine.store_values(binary_img=warpImg, curr_fit=right_fit, curr_xy=right_xy)
+#    else:
+#        leftLine.frame_skipped()
+#        rightLine.frame_skipped()
+
 def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine):
     ploty = np.linspace(0, warpedImage.shape[0] - 1, warpedImage.shape[0])
     # Create an image to draw the lines on
@@ -495,21 +531,34 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine):
     color_warp = np.dstack((warp_zero, warp_zero, warp_zero))
 
     # Recast the x and y points into usable format for cv2.fillPoly()
-    if leftLine.skippedFrames > 0:
-        pts_left = np.array([np.transpose(np.vstack([leftLine.best_fit, ploty]))])
-    else:
-        pts_left = np.array([np.transpose(np.vstack([leftLine.recent_xfitted[-1], ploty]))])
+    #if leftLine.skippedFrames > 0:
+    #    pts_left = np.array([np.flipud(np.transpose(np.vstack([leftLine.best_fit, ploty])))])
+    #else:
+    pts_left = np.array([np.flipud(np.transpose(np.vstack([leftLine.recent_xfitted[-1], ploty])))])
 
-    if rightLine.skippedFrames > 0:
-        pts_right = np.array([np.flipud(np.transpose(np.vstack([rightLine.best_fit, ploty])))])
-    else:
-        pts_right = np.array([np.flipud(np.transpose(np.vstack([rightLine.recent_xfitted[-1], ploty])))])
+    #if rightLine.skippedFrames > 0:
+    #    pts_right = np.array([np.transpose(np.vstack([rightLine.best_fit, ploty]))])
+    #else:
+    pts_right = np.array([np.transpose(np.vstack([rightLine.recent_xfitted[-1], ploty]))])
 
-    #print(pts_right)
-    pts = np.hstack((pts_left, pts_right))
+    if not sanityCheck(pts_right, pts_left):
+        leftLine.frame_skipped()
+        rightLine.frame_skipped()
+
+        pts_left = np.array([np.flipud(np.transpose(np.vstack([leftLine.best_fit, ploty])))])
+        pts_right = np.array([np.transpose(np.vstack([rightLine.best_fit, ploty]))])
+    else:
+        leftLine.skippedFrames = 0
+        rightLine.skippedFrames = 0
+
+    pts = np.hstack((pts_right, pts_left))
+
+    #print(pts.shape)
 
     # Draw the lane onto the warped blank image
     cv2.fillPoly(color_warp, np.int_([pts]), (0, 255, 0))
+
+    #return color_warp
 
     # Warp the blank back to original image space using inverse perspective matrix (Minv)
     newwarp = cv2.warpPerspective(color_warp, Minv, (img.shape[1], img.shape[0]))
@@ -540,9 +589,6 @@ def run_pipeline(img, mtx, dist, leftLine, rightLine):
     # (3) Color/Gradient Threshold
     s_binary = hls_saturation_threshold(undistImg, thresh=(170, 255))
 
-    # (3) Color/Gradient Threshold
-    s_binary = hls_saturation_threshold(undistImg, thresh=(170, 255))
-
     ksize = 3
     gradx = abs_sobel_thresh(undistImg, orient='x', sobel_kernel=ksize, thresh=(20, 100))
     #grady = abs_sobel_thresh(undistImg, orient='y', sobel_kernel=ksize, thresh=(20, 100))
@@ -553,8 +599,8 @@ def run_pipeline(img, mtx, dist, leftLine, rightLine):
     combo[(s_binary == 1) | (gradx == 1)] = 1
 
     # (4) Perspective Transform [Top Left, Top Right, Bottom Right, Bottom Left]
-    srcCoords = np.float32( [[578, 460], [705, 460], [1122, 719], [190, 719]])
-    dstCoords = np.float32( [[180, 0], [1122, 0], [1122, 719], [180, 719]])
+    srcCoords = np.float32([[578, 460], [705, 460], [1122, 719], [190, 719]])
+    dstCoords = np.float32([[180, 0], [1122, 0], [1122, 719], [180, 719]])
 
     warpImg, Minv = warp_image(combo, srcCoords, dstCoords, inverse=True)
 
@@ -565,26 +611,31 @@ def run_pipeline(img, mtx, dist, leftLine, rightLine):
         left_fit, right_fit, left_xy, right_xy = find_line_pixels(warpImg, leftLine.current_fit, rightLine.current_fit)
 
     # Sanity Check
-    bot_lane_width = np.median(right_xy[0][:1000]) - np.median(left_xy[0][:100])
-    top_lane_width = np.median(right_xy[0][-100:]) - np.median(left_xy[0][-100:])
+    #bot_lane_width = np.median(right_xy[0][:1000]) - np.median(left_xy[0][:1000])
+    #top_lane_width = np.median(right_xy[0][-1000:]) - np.median(left_xy[0][-1000:])
+    #print(len(right_xy[0]))
 
     #print(len(right_xy[0]))
 
-    lane_width = np.mean(right_xy[0]) - np.mean(left_xy[0])
+    #lane_width = np.mean(right_xy[0]) - np.mean(left_xy[0])
     #print('BOT: %d' % bot_lane_width) # ~875
     #print('TOP: %d' % top_lane_width) # ~126
-    if abs(900 - bot_lane_width) <= 80:# and abs(815 - top_lane_width) <= 100 :
+
+    #print("Bottom: %d" % abs(900 - bot_lane_width))
+    #print("Top: %d" % abs(150 - top_lane_width))
+    #if abs(900 - bot_lane_width) <= 70:#and abs(150 - top_lane_width) <= 200:#abs(815 - top_lane_width) <= 80:
     #if bot_lane_width > 850. and bot_lane_width < 1000:#930.:
-        # Store line values
-        leftLine.skippedFrames = 0
-        leftLine.store_values(binary_img=warpImg, curr_fit=left_fit, curr_xy=left_xy)
+    # Store line values
+    #leftLine.skippedFrames = 0
+    leftLine.store_values(binary_img=warpImg, curr_fit=left_fit, curr_xy=left_xy)
 
-        leftLine.skippedFrames = 0
-        rightLine.store_values(binary_img=warpImg, curr_fit=right_fit, curr_xy=right_xy)
-    else:
-        leftLine.frame_skipped()
-        rightLine.frame_skipped()
+    #leftLine.skippedFrames = 0
+    rightLine.store_values(binary_img=warpImg, curr_fit=right_fit, curr_xy=right_xy)
+#    else:
+#        leftLine.frame_skipped()
+#        rightLine.frame_skipped()
 
-    return get_detected_lane(img=img, undistImg=undistImg, warpedImage=warpImg, Minv=Minv, leftLine=leftLine, rightLine=rightLine)
+    return get_detected_lane(img=img, undistImg=undistImg, warpedImage=warpImg, Minv=Minv, leftLine=leftLine,
+                             rightLine=rightLine)
 
 
