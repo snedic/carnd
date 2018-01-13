@@ -653,16 +653,21 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine, cu
     # Recast the x and y points into usable format for cv2.fillPoly()
     pts_left = np.array([np.flipud(np.transpose(np.vstack([leftLine.recent_xfitted[-1], ploty])))])
     pts_right = np.array([np.transpose(np.vstack([rightLine.recent_xfitted[-1], ploty]))])
+    #pts_left = np.array([np.flipud(np.transpose(np.vstack([leftLine.best_fit, ploty])))])
+    #pts_right = np.array([np.transpose(np.vstack([rightLine.best_fit, ploty]))])
 
     # Perform a sanity check against the detected lane lines
-    sane, widths = sanityCheck(pts_right, pts_left, expectedLaneWidth=900, laneWidthThreshold=100)
+    sane, widths = sanityCheck(pts_right, pts_left, expectedLaneWidth=900, laneWidthThreshold=90)
     #sane = True
     if not sane:
         leftLine.frame_skipped()
         rightLine.frame_skipped()
 
-        pts_left = np.array([np.flipud(np.transpose(np.vstack([leftLine.best_fit, ploty])))])
-        pts_right = np.array([np.transpose(np.vstack([rightLine.best_fit, ploty]))])
+        # Recast the x and y points into usable format for cv2.fillPoly()
+        pts_left = np.array([np.flipud(np.transpose(np.vstack([leftLine.recent_xfitted[-1], ploty])))])
+        pts_right = np.array([np.transpose(np.vstack([rightLine.recent_xfitted[-1], ploty]))])
+        #pts_left = np.array([np.flipud(np.transpose(np.vstack([leftLine.best_fit, ploty])))])
+        #pts_right = np.array([np.transpose(np.vstack([rightLine.best_fit, ploty]))])
     else:
         leftLine.skippedFrames = 0
         rightLine.skippedFrames = 0

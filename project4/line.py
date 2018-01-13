@@ -83,7 +83,7 @@ class Line():
         self.recent_diffs.pop()
 
         # check if we need to reassess the lane detection with a sliding window
-        self.detected = self.skippedFrames > 5# self.n*.5 #self.skippedFrames < self.n/2
+        self.detected = self.skippedFrames > min(5, self.n)# self.n*.5 #self.skippedFrames < self.n/2
 
         # reset current values
         self.current_fit = self.previous_fit
