@@ -4,25 +4,41 @@ import matplotlib.pyplot as plt
 from matplotlib import image as mpimg
 from matplotlib.patches import Polygon
 from glob import glob
-from line import Line
 from math import ceil
 
-def calibrate(img, objPts, imgPts):
 
+def calibrate(img, objPts, imgPts):
+    '''
+    :param img: input image loaded with cv2
+    :param objPts:
+    :param imgPts:
+    :return:
+    '''
     # Calibrate the image
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objPts, imgPts, img.shape[1::-1], None, None)
 
     return (mtx, dist)
 
-def calibrate_undistort(img, objPts, imgPts):
 
+def calibrate_undistort(img, objPts, imgPts):
+    '''
+    :param img:  input image loaded with cv2
+    :param objPts:
+    :param imgPts:
+    :return:
+    '''
     # Calibrate the image
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objPts, imgPts, img.shape[1::-1], None, None)
 
     # Undistort the image
     return cv2.undistort(img, mtx, dist, None, mtx)
 
+
 def calibrate_camera(calImg='camera_cal/calibration1.jpg'):
+    '''
+    :param calImg: calibration image
+    :return:
+    '''
     images = glob('camera_cal/calibration*.jpg')
 
     # Arrays to store object points and image points from all the images
@@ -47,7 +63,6 @@ def calibrate_camera(calImg='camera_cal/calibration1.jpg'):
         if ret is True:
             imgPoints.append(corners)
             objPoints.append(objP)
-            #print(distImg)
 
     # Calibrate and remove the distortion from the image
     img = mpimg.imread(calImg)
@@ -55,7 +70,15 @@ def calibrate_camera(calImg='camera_cal/calibration1.jpg'):
 
     return (mtx, dist)
 
+
 def display_images(imgArr, imgLabels=None, isImgGray=None, rows=1):
+    '''
+    :param imgArr:
+    :param imgLabels:
+    :param isImgGray:
+    :param rows:
+    :return:
+    '''
     if isImgGray is None:
         isImgGray = np.zeros_like(imgArr)
 
@@ -83,7 +106,18 @@ def display_images(imgArr, imgLabels=None, isImgGray=None, rows=1):
     else:
         raise Exception
 
+
 def display_poly_img(img, coords, isFilled=False, color='red', fig=None, subplot=111, colorMap=None):
+    '''
+    :param img:
+    :param coords:
+    :param isFilled:
+    :param color:
+    :param fig:
+    :param subplot:
+    :param colorMap:
+    :return:
+    '''
     poly = Polygon(xy=coords, closed=True, fill=isFilled, edgecolor=color)
     if fig is None:
         fig = plt.figure()
@@ -92,25 +126,31 @@ def display_poly_img(img, coords, isFilled=False, color='red', fig=None, subplot
     ax.add_patch(poly)
 
     return fig, ax
-    #plt.show()
+
 
 def display_binary_image_histo(img):
+    '''
+    :param img:
+    :return:
+    '''
     histogram = np.sum(img[img.shape[0]//2:,:], axis=0)
     plt.plot(histogram)
     plt.imshow(img, cmap='gray')
     plt.show()
 
-def display_fit_lines(warpedImage, left_fit, right_fit):#, nonzerox, nonzeroy, right_lane_inds, left_lane_inds, outImage=None ):
-    #if outImage is None:
-    #    outImage = warpedImage
 
+def display_fit_lines(warpedImage, left_fit, right_fit):
+    '''
+    :param warpedImage:
+    :param left_fit:
+    :param right_fit:
+    :return:
+    '''
     # Generate x and y values for plotting
     ploty = np.linspace(0, warpedImage.shape[0] - 1, warpedImage.shape[0])
     left_fitx = left_fit[0] * ploty ** 2 + left_fit[1] * ploty + left_fit[2]
     right_fitx = right_fit[0] * ploty ** 2 + right_fit[1] * ploty + right_fit[2]
 
-    #outImage[nonzeroy[left_lane_inds], nonzerox[left_lane_inds]] = [255, 0, 0]
-    #outImage[nonzeroy[right_lane_inds], nonzerox[right_lane_inds]] = [0, 0, 255]
     plt.imshow(warpedImage, cmap='gray')
     plt.plot(left_fitx, ploty, color='yellow')
     plt.plot(right_fitx, ploty, color='yellow')
@@ -118,8 +158,19 @@ def display_fit_lines(warpedImage, left_fit, right_fit):#, nonzerox, nonzeroy, r
     plt.ylim(720, 0)
     plt.show()
 
+
 def display_lane_detection(img, undistImg, warpedImage, Minv, leftLine, rightLine):
+    '''
+    :param img:
+    :param undistImg:
+    :param warpedImage:
+    :param Minv:
+    :param leftLine:
+    :param rightLine:
+    :return:
+    '''
     ploty = np.linspace(0, warpedImage.shape[0] - 1, warpedImage.shape[0])
+
     # Create an image to draw the lines on
     warp_zero = np.zeros_like(warpedImage).astype(np.uint8)
     color_warp = np.dstack((warp_zero, warp_zero, warp_zero))
@@ -134,6 +185,7 @@ def display_lane_detection(img, undistImg, warpedImage, Minv, leftLine, rightLin
 
     # Warp the blank back to original image space using inverse perspective matrix (Minv)
     newwarp = cv2.warpPerspective(color_warp, Minv, (img.shape[1], img.shape[0]))
+
     # Combine the result with the original image
     result = cv2.addWeighted(undistImg, 1, newwarp, 0.3, 0)
     plt.imshow(result)
@@ -141,6 +193,13 @@ def display_lane_detection(img, undistImg, warpedImage, Minv, leftLine, rightLin
 
 
 def warp_image(img, srcCrds, dstCrds, inverse=False):
+    '''
+    :param img:
+    :param srcCrds:
+    :param dstCrds:
+    :param inverse:
+    :return:
+    '''
     # Define calibration box in source (original) and destination (desired or warped) coordinates
     img_size = (img.shape[1], img.shape[0])
 
@@ -161,7 +220,17 @@ def warp_image(img, srcCrds, dstCrds, inverse=False):
     # Create warped image - uses linear interpolation
     return cv2.warpPerspective(img, M, img_size, flags=cv2.INTER_LINEAR), Minv
 
+
 def corners_unwarp(img, nx, ny, mtx, dist, dstTLCoords=[100, 100]):
+    '''
+    :param img:
+    :param nx:
+    :param ny:
+    :param mtx:
+    :param dist:
+    :param dstTLCoords:
+    :return:
+    '''
     # Pass in your image into this function
 
     # 1) Undistort using mtx and dist
@@ -206,6 +275,7 @@ def corners_unwarp(img, nx, ny, mtx, dist, dstTLCoords=[100, 100]):
 
     return warped, M
 
+
 def abs_sobel_thresh(img, sobel_kernel=3, orient='x', thresh=(0, 255), grayColorCode=cv2.COLOR_RGB2GRAY):
     ''' 
     :param img:
@@ -238,6 +308,7 @@ def abs_sobel_thresh(img, sobel_kernel=3, orient='x', thresh=(0, 255), grayColor
     sxbinary[(scaledSobel >= thresh[0]) & (scaledSobel <= thresh[1])] = 1
 
     return sxbinary
+
 
 def mag_sobel_thresh(img, sobel_kernel=3, thresh=(0, 255), grayColorCode=cv2.COLOR_RGB2GRAY):
     '''
@@ -305,6 +376,7 @@ def dir_sobel_threshold(img, sobel_kernel=3, thresh=(0, np.pi / 2), grayColorCod
 
     return binary_output
 
+
 def hls_saturation_threshold(img, thresh=(170, 255), hlsColorCode=cv2.COLOR_RGB2HLS):
     '''
     :param img:
@@ -324,7 +396,12 @@ def hls_saturation_threshold(img, thresh=(170, 255), hlsColorCode=cv2.COLOR_RGB2
     # 3) Return a binary image of threshold result
     return binary_output
 
+
 def sliding_windows_fit_lines(binary_warped):
+    '''
+    :param binary_warped: a binary warped image
+    :return:
+    '''
 
     # Assuming you have created a warped binary image called "binary_warped"
     # Take a histogram of the bottom half of the image
@@ -414,11 +491,16 @@ def sliding_windows_fit_lines(binary_warped):
     left_fit = np.polyfit(lefty, leftx, 2)
     right_fit = np.polyfit(righty, rightx, 2)
 
-    #return left_fit, right_fit, out_img, nonzerox, nonzeroy, left_lane_inds, right_lane_inds, leftx, rightx
     return left_fit, right_fit, (leftx, lefty), (rightx, righty)
 
 
 def find_line_pixels(warpedImage, left_fit, right_fit):
+    '''
+    :param warpedImage:
+    :param left_fit:
+    :param right_fit:
+    :return:
+    '''
     # Assume you now have a new warped binary image
     # from the next frame of video (also called "binary_warped")
     # It's now much easier to find line pixels!
@@ -446,15 +528,15 @@ def find_line_pixels(warpedImage, left_fit, right_fit):
     left_fit = np.polyfit(lefty, leftx, 2)
     right_fit = np.polyfit(righty, rightx, 2)
 
-    # Generate x and y values for plotting
-    #ploty = np.linspace(0, warpedImage.shape[0] - 1, warpedImage.shape[0])
-    #left_fitx = left_fit[0] * ploty ** 2 + left_fit[1] * ploty + left_fit[2]
-    #right_fitx = right_fit[0] * ploty ** 2 + right_fit[1] * ploty + right_fit[2]
-
-    #return left_fit, right_fit, nonzerox, nonzeroy, left_lane_inds, right_lane_inds, leftx, rightx
     return left_fit, right_fit, (leftx, lefty), (rightx, righty)
 
 def get_curve_radius(warpedImage, left_fit, right_fit):
+    '''
+    :param warpedImage:
+    :param left_fit:
+    :param right_fit:
+    :return:
+    '''
     ploty = np.linspace(0, warpedImage.shape[0] - 1, warpedImage.shape[0])
     y_eval = np.max(ploty)
 
@@ -464,11 +546,18 @@ def get_curve_radius(warpedImage, left_fit, right_fit):
 
 
 def get_scaled_curve_radius(warpedImage, left_fit, right_fit):
+    '''
+    :param warpedImage:
+    :param left_fit:
+    :param right_fit:
+    :return:
+    '''
     ploty = np.linspace(0, warpedImage.shape[0] - 1, warpedImage.shape[0])
     left_fitx = left_fit[0] * ploty ** 2 + left_fit[1] * ploty + left_fit[2]
     right_fitx = right_fit[0] * ploty ** 2 + right_fit[1] * ploty + right_fit[2]
 
     y_eval = np.max(ploty)
+
     # Define conversions in x and y from pixels space to meters
     ym_per_pix = 30. / 720  # meters per pixel in y dimension
     xm_per_pix = 3.7 / 700  # meters per pixel in x dimension
@@ -484,9 +573,6 @@ def get_scaled_curve_radius(warpedImage, left_fit, right_fit):
         2 * right_fit_cr[0])
 
     return left_curverad, right_curverad
-    # Now our radius of curvature is in meters
-    #print(left_curverad, 'm', right_curverad, 'm')
-    # Example values: 632.1 m    626.2 m
 
 
 def sanityCheck(ptsRt, ptsLft, expectedLaneWidth=900, laneWidthThreshold=100):
@@ -507,7 +593,53 @@ def sanityCheck(ptsRt, ptsLft, expectedLaneWidth=900, laneWidthThreshold=100):
 
     return (abs(expectedLaneWidth - bot_lane_width) <= laneWidthThreshold and
            abs(expectedLaneWidth - top_lane_width) <= laneWidthThreshold and
-           abs(expectedLaneWidth - mid_lane_width) <= laneWidthThreshold), (bot_lane_width, top_lane_width)
+           abs(expectedLaneWidth - mid_lane_width) <= laneWidthThreshold), (bot_lane_width, mid_lane_width, top_lane_width)
+
+
+def pictureInPicture(img, pipImgs=[], pipLbls=[], resizeRatio=0.25):
+
+    # position pip image in top right corner
+    x_offset = img.shape[1]
+    y_offset = 0
+    row_y_offset = 0
+
+    hasLabels = pipLbls is not None and len(pipLbls) == len(pipImgs)
+
+    #for pipImg in pipImgs:
+    for i in range(len(pipImgs)):
+        pipImg = pipImgs[i].copy()
+
+        # resize the pip image
+        pipImg = cv2.resize(pipImg, (0, 0), fx=resizeRatio, fy=resizeRatio)
+
+        if hasLabels:
+            cv2.putText(pipImg, text=pipLbls[i],
+                        org=(int(pipImg.shape[1]/4), int(pipImg.shape[0]*0.9)),
+                        fontFace=cv2.FONT_ITALIC, fontScale=0.8, color=(255, 255, 255), thickness=2)
+
+        if x_offset - pipImg.shape[1] < 0:
+            y_offset = row_y_offset
+            row_y_offset = 0
+            x_offset = img.shape[1]
+
+        mnY, mxY = y_offset, y_offset + pipImg.shape[0]
+        mnX, mxX = x_offset - pipImg.shape[1], x_offset
+
+        img[mnY:mxY, mnX:mxX] = pipImg
+
+        x_offset -= pipImg.shape[1]
+        row_y_offset = max(row_y_offset, mxY)
+
+    return img
+
+
+def gray2RGB(gray):
+    resultRGB = []
+    for row in gray:
+        newRow = [[val, val, val] for val in row]
+        resultRGB.append(newRow)
+
+    return np.round(np.asarray(resultRGB)*255)
 
 
 def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine, curr_fits, curr_xys):
@@ -523,14 +655,14 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine, cu
     pts_right = np.array([np.transpose(np.vstack([rightLine.recent_xfitted[-1], ploty]))])
 
     # Perform a sanity check against the detected lane lines
-    #if not sanityCheck(pts_right, pts_left):
-    sane, widths = sanityCheck(pts_right, pts_left, expectedLaneWidth=900, laneWidthThreshold=100)
+    sane, widths = sanityCheck(pts_right, pts_left, expectedLaneWidth=900, laneWidthThreshold=70)
+    #sane = True
     if not sane:
         leftLine.frame_skipped()
         rightLine.frame_skipped()
 
-        #pts_left = np.array([np.flipud(np.transpose(np.vstack([leftLine.best_fit, ploty])))])
-        #pts_right = np.array([np.transpose(np.vstack([rightLine.best_fit, ploty]))])
+        pts_left = np.array([np.flipud(np.transpose(np.vstack([leftLine.best_fit, ploty])))])
+        pts_right = np.array([np.transpose(np.vstack([rightLine.best_fit, ploty]))])
     else:
         leftLine.skippedFrames = 0
         rightLine.skippedFrames = 0
@@ -544,21 +676,28 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine, cu
     # Draw the lane onto the warped blank image
     cv2.fillPoly(color_warp, np.int_([pts]), (0, 255, 0))
 
-    #return color_warp
-
     # Warp the blank back to original image space using inverse perspective matrix (Minv)
     newwarp = cv2.warpPerspective(color_warp, Minv, (img.shape[1], img.shape[0]))
 
     # Combine the result with the original image
     result = cv2.addWeighted(undistImg, 1, newwarp, 0.3, 0)
 
+    # Add the color warped birdseye view to top right corner of output
+    rgbWarpedImage = gray2RGB(warpedImage)
+
+    pipImages = [newwarp, color_warp, rgbWarpedImage, undistImg, img]
+    pipLabels = ['newwarp', 'color_warp', 'warpedImage', 'undistImg', 'img (orig)']
+    result = pictureInPicture(img=result, pipImgs=pipImages, pipLbls=pipLabels, resizeRatio=0.20)
+
     # Add text to the image
     font = cv2.FONT_ITALIC
     txtLines = [
         'Offset --- {:.3f} m'.format(rightLine.line_base_pos + leftLine.line_base_pos),
         '{:.1f} m --- Radius of Curvature --- {:.1f} m'.format(leftLine.radius_of_curvature, rightLine.radius_of_curvature),
-        '{} --- top width'.format(widths[1]),
-        '{} --- bottom width'.format(widths[0])
+        #'DROPPED!!!!' if not sane else 'kept',
+        #'{} --- top width'.format(widths[2]),
+        #'{} --- mid width'.format(widths[1]),
+        #'{} --- bottom width'.format(widths[0])
                 ]
     for i in range(len(txtLines)):
         txt = txtLines[i]

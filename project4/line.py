@@ -2,8 +2,8 @@ import numpy as np
 
 # Define a class to receive the characteristics of each line detection
 class Line():
-    def __init__(self):
-        self.n = 30
+    def __init__(self, n=20):
+        self.n = n
         self.skippedFrames = 0
 
         # Define conversions in x and y from pixels space to meters
@@ -79,15 +79,9 @@ class Line():
 
         return curverad
 
-    def diffs_sanity_check(self, diffs):
-        # Sanity check
-        #rad_thresh = 1000
-        #if np.abs(self.radius_of_curvature - line.radius_of_curvature) > rad_thresh:
-        #    return False
-
-        return True#len(self.recent_diffs) < 2 or (self.diffs > (4 * np.std(self.recent_diffs))).all()
 
     def frame_skipped(self):
+        #print("Frame Skipped")
         self.skippedFrames += 1
 
         # remove last added frame from the arrays
@@ -95,7 +89,7 @@ class Line():
         self.recent_diffs.pop()
 
         # check if we need to reassess the lane detection with a sliding window
-        self.detected = self.skippedFrames < 2
+        self.detected = self.skippedFrames > 5# self.n*.5 #self.skippedFrames < self.n/2
 
         # reset current values
         self.current_fit = self.previous_fit
