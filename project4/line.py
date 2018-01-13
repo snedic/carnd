@@ -55,13 +55,7 @@ class Line():
         if len(self.recent_diffs) > self.n:
             self.recent_diffs.pop(0)
 
-    #def appendFittedCoeffs(self, curr_fit):
-    #    self.recent_fitted.append(curr_fit)
-    #    if len(self.recent_fitted) > self.n:
-    #        self.recent_fitted.pop(0)
-
     def get_curve_radius(ploty, curr_fit):
-        #ploty = np.linspace(0, warpedImage.shape[0] - 1, warpedImage.shape[0])
         y_eval = np.max(ploty)
 
         curverad = ((1 + (2 * curr_fit[0] * y_eval + curr_fit[1]) ** 2) ** 1.5) / np.absolute(2 * curr_fit[0])

@@ -655,7 +655,7 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine, cu
     pts_right = np.array([np.transpose(np.vstack([rightLine.recent_xfitted[-1], ploty]))])
 
     # Perform a sanity check against the detected lane lines
-    sane, widths = sanityCheck(pts_right, pts_left, expectedLaneWidth=900, laneWidthThreshold=70)
+    sane, widths = sanityCheck(pts_right, pts_left, expectedLaneWidth=900, laneWidthThreshold=100)
     #sane = True
     if not sane:
         leftLine.frame_skipped()
@@ -705,7 +705,6 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine, cu
                     fontFace=font, fontScale=0.8, color=(255, 255, 255), thickness=2)
 
     return result
-
 
 
 def run_pipeline(img, mtx, dist, leftLine, rightLine):

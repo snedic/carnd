@@ -72,7 +72,7 @@ def run(input, output):
     ## Where start_second and end_second are integer values representing the start and end of the subclip
     ## You may also uncomment the following line for a subclip of the first 5 seconds
     ##clip = VideoFileClip('test_videos/challenge.mp4').subclip(0,5)
-    clip = VideoFileClip(input)#.subclip(20, 24)
+    clip = VideoFileClip(input)#.subclip(10, 15) #(20,24)
     output_clip = clip.fl_image(process_image)
 
     output_clip.write_videofile(output, audio=False)
