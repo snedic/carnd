@@ -73,7 +73,7 @@ def run(input, output):
     ## Where start_second and end_second are integer values representing the start and end of the subclip
     ## You may also uncomment the following line for a subclip of the first 5 seconds
     ##clip = VideoFileClip('test_videos/challenge.mp4').subclip(0,5)
-    clip = VideoFileClip(input)#.subclip(38,45)#(10, 15) #(20,24)
+    clip = VideoFileClip(input)#.subclip(29, 35)#(10, 15) #(20,24)
     output_clip = clip.fl_image(process_image)
 
     output_clip.write_videofile(output, audio=False)
@@ -82,5 +82,5 @@ def run(input, output):
 #run_test()
 #run_tests()
 #frames = ['frames/frame034.png']; run_frames(frames)
-run(input='CarND-Advanced-Lane-Lines/project_video.mp4', output='./result_clip.mp4')
+run(input='CarND-Advanced-Lane-Lines/project_video.mp4', output='./result.mp4')
 

@@ -694,10 +694,14 @@ def get_detected_lane(img, undistImg, warpedImage, Minv, leftLine, rightLine, cu
     pipLabels = ['newwarp', 'color_warp', 'warpedImage', 'undistImg', 'img (orig)']
     result = pictureInPicture(img=result, pipImgs=pipImages, pipLbls=pipLabels, resizeRatio=0.20)
 
+    # Calculate the lane vehicle to lane offset
+    offset = ((leftLine.line_base_pos + rightLine.line_base_pos)/2. - img.shape[1]/2.) * leftLine.xm_per_pix
+
     # Add text to the image
     font = cv2.FONT_ITALIC
+    # base_pos = binary_img.shape[1] / 2
     txtLines = [
-        'Offset --- {:.3f} m'.format(rightLine.line_base_pos + leftLine.line_base_pos),
+        'Offset --- {:.3f} m'.format(offset),
         '{:.1f} m --- Radius of Curvature --- {:.1f} m'.format(leftLine.radius_of_curvature, rightLine.radius_of_curvature),
         #'DROPPED!!!!' if not sane else 'kept',
         #'{} --- top width'.format(widths[2]),

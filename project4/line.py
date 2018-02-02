@@ -127,6 +127,7 @@ class Line():
         self.radius_of_curvature = self.get_scaled_curve_radius(ploty, fitx)
 
         # store distance (m) of vehicle center to the line
-        base_pos = binary_img.shape[1] / 2
-        self.line_base_pos = (base_pos - fitx[-1]) * self.xm_per_pix
+        # offset = ([leftLine base X] + [rightLine base X])/2 - imgWidth/2
+        #base_pos = binary_img.shape[1] / 2
+        self.line_base_pos = fitx[-1]#(base_pos - fitx[-1]/2) * self.xm_per_pix
 
